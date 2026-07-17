@@ -1,3 +1,7 @@
 spring:
   application:
     name: userservice
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
