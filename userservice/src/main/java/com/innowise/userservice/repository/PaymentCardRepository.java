@@ -10,7 +10,7 @@ import java.util.List;
 public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long> {
 
     @Modifying
-    @Query("UPDATE PaymentCard SET PaymentCard.active = :active WHERE PaymentCard.id = :id")
+    @Query("UPDATE PaymentCard p SET p.active = :active WHERE p.id = :id")
     void setActive(Long id, Boolean active);
 
     List<PaymentCard> findByUserId(Long id);
