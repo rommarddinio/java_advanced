@@ -16,11 +16,11 @@ public interface PaymentCardService {
 
     Page<PaymentCardDTO> getPaymentCards(Pageable pageable, String name, String surname);
 
-    void activatePaymentCard();
+    void activatePaymentCard(Long id);
 
-    void deactivatePaymentCard();
+    void deactivatePaymentCard(Long id);
 
-    void deactivatePaymentCardsByUserId();
+    void deactivatePaymentCardsByUserId(Long userId);
 
     PaymentCardDTO updatePaymentCard(PaymentCardDTO paymentCardDTO);
 

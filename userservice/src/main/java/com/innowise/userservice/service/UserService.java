@@ -12,10 +12,10 @@ public interface UserService {
 
     Page<UserDTO> getUsers(Pageable pageable, String name, String surname);
 
-    void activateUser();
+    void activateUser(Long id);
 
-    void deactivateUser();
+    void deactivateUser(Long id);
 
     UserDTO updateUser(UserDTO userDTO);
-    
+
 }
