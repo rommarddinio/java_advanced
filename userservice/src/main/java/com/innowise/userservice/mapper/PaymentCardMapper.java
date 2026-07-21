@@ -7,6 +7,8 @@ import com.innowise.userservice.entity.PaymentCard;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", uses = UserMapper.class)
 public interface PaymentCardMapper {
 
@@ -21,5 +23,7 @@ public interface PaymentCardMapper {
 
     @Mapping(source = "user.id", target = "userId")
     ResponsePaymentCardDto toDto(PaymentCard paymentCard);
+
+    List<ResponsePaymentCardDto> toDtoList(List<PaymentCard> paymentCards);
 
 }
