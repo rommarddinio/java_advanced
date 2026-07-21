@@ -4,6 +4,7 @@ import com.innowise.userservice.dto.user.CreateUserDto;
 import com.innowise.userservice.dto.user.ResponseUserDto;
 import com.innowise.userservice.dto.user.UpdateUserDto;
 import com.innowise.userservice.entity.User;
+import com.innowise.userservice.exception.UserNotFoundException;
 import com.innowise.userservice.mapper.UserMapper;
 import com.innowise.userservice.repository.PaymentCardRepository;
 import com.innowise.userservice.repository.UserRepository;
@@ -39,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseUserDto getUserById(Long id) {
-        return userMapper.toDto(userRepository.findById(id).orElseThrow());
+        return userMapper.toDto(userRepository.findById(id).orElseThrow(UserNotFoundException::new));
     }
 
     @Override
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public ResponseUserDto updateUser(Long id, UpdateUserDto userDto) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
 
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());

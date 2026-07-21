@@ -4,6 +4,9 @@ import com.innowise.userservice.dto.paymentcard.CreatePaymentCardDto;
 import com.innowise.userservice.dto.paymentcard.ResponsePaymentCardDto;
 import com.innowise.userservice.dto.paymentcard.UpdatePaymentCardDto;
 import com.innowise.userservice.entity.PaymentCard;
+import com.innowise.userservice.exception.CardLimitException;
+import com.innowise.userservice.exception.CardNotFoundException;
+import com.innowise.userservice.exception.UserNotFoundException;
 import com.innowise.userservice.mapper.PaymentCardMapper;
 import com.innowise.userservice.repository.PaymentCardRepository;
 import com.innowise.userservice.repository.UserRepository;
@@ -33,9 +36,9 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Override
     public ResponsePaymentCardDto createPaymentCard(CreatePaymentCardDto paymentCardDto) {
         userRepository.findById(paymentCardDto.getUserId())
-                .orElseThrow();
+                .orElseThrow(UserNotFoundException::new);
         if (paymentCardRepository.countByUserId(paymentCardDto.getUserId()) >= 5)
-            return null;
+            throw new CardLimitException();
 
         PaymentCard paymentCard = paymentCardMapper.toEntity(paymentCardDto);
         paymentCard.setActive(true);
@@ -86,13 +89,13 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Override
     public ResponsePaymentCardDto updatePaymentCard(Long id, UpdatePaymentCardDto paymentCardDto) {
         PaymentCard paymentCard = paymentCardRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(CardNotFoundException::new);
 
         paymentCard.setNumber(paymentCardDto.getNumber());
         paymentCard.setHolder(paymentCardDto.getHolder());
         paymentCard.setExpirationDate(paymentCardDto.getExpirationDate());
         paymentCard.setUser(userRepository.findById(paymentCardDto.getUserId()).
-                orElseThrow());
+                orElseThrow(UserNotFoundException::new));
 
         return paymentCardMapper.toDto(paymentCardRepository.save(paymentCard));
     }
