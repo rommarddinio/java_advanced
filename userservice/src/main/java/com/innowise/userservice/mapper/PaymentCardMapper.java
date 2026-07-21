@@ -1,6 +1,8 @@
 package com.innowise.userservice.mapper;
 
-import com.innowise.userservice.dto.PaymentCardDTO;
+import com.innowise.userservice.dto.paymentcard.CreatePaymentCardDto;
+import com.innowise.userservice.dto.paymentcard.ResponsePaymentCardDto;
+import com.innowise.userservice.dto.paymentcard.UpdatePaymentCardDto;
 import com.innowise.userservice.entity.PaymentCard;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -9,9 +11,15 @@ import org.mapstruct.Mapping;
 public interface PaymentCardMapper {
 
     @Mapping(source = "userId", target = "user.id")
-    PaymentCard toEntity(PaymentCardDTO paymentCardDTO);
+    PaymentCard toEntity(CreatePaymentCardDto paymentCardDto);
+
+    @Mapping(source = "userId", target = "user.id")
+    PaymentCard toEntity(UpdatePaymentCardDto paymentCardDto);
+
+    @Mapping(source = "userId", target = "user.id")
+    PaymentCard toEntity(ResponsePaymentCardDto paymentCardDto);
 
     @Mapping(source = "user.id", target = "userId")
-    PaymentCardDTO toDTO(PaymentCard paymentCard);
+    ResponsePaymentCardDto toDto(PaymentCard paymentCard);
 
 }

@@ -1,14 +1,20 @@
 package com.innowise.userservice.mapper;
 
-import com.innowise.userservice.dto.UserDTO;
+import com.innowise.userservice.dto.user.CreateUserDto;
+import com.innowise.userservice.dto.user.ResponseUserDto;
+import com.innowise.userservice.dto.user.UpdateUserDto;
 import com.innowise.userservice.entity.User;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = PaymentCardMapper.class)
 public interface UserMapper {
 
-    User toEntity(UserDTO userDTO);
+    User toEntity(ResponseUserDto userDto);
 
-    UserDTO toDTO(User user);
+    User toEntity(CreateUserDto userDto);
+
+    User toEntity(UpdateUserDto userDto);
+
+    ResponseUserDto toDto(User user);
 
 }
