@@ -1,6 +1,8 @@
 package com.innowise.userservice.service;
 
-import com.innowise.userservice.dto.PaymentCardDTO;
+import com.innowise.userservice.dto.paymentcard.CreatePaymentCardDto;
+import com.innowise.userservice.dto.paymentcard.ResponsePaymentCardDto;
+import com.innowise.userservice.dto.paymentcard.UpdatePaymentCardDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -8,13 +10,13 @@ import java.util.List;
 
 public interface PaymentCardService {
 
-    PaymentCardDTO createPaymentCard(PaymentCardDTO paymentCardDTO);
+    ResponsePaymentCardDto createPaymentCard(CreatePaymentCardDto paymentCardDTO);
 
-    PaymentCardDTO getPaymentCardById(Long id);
+    ResponsePaymentCardDto getPaymentCardById(Long id);
 
-    List<PaymentCardDTO> getPaymentCardsByUserId(Long userId);
+    List<ResponsePaymentCardDto> getPaymentCardsByUserId(Long userId);
 
-    Page<PaymentCardDTO> getPaymentCards(Pageable pageable, String name, String surname);
+    Page<ResponsePaymentCardDto> getPaymentCards(Pageable pageable, String name, String surname);
 
     void activatePaymentCard(Long id);
 
@@ -22,6 +24,6 @@ public interface PaymentCardService {
 
     void deactivatePaymentCardsByUserId(Long userId);
 
-    PaymentCardDTO updatePaymentCard(PaymentCardDTO paymentCardDTO);
+    ResponsePaymentCardDto updatePaymentCard(Long id, UpdatePaymentCardDto paymentCardDTO);
 
 }
