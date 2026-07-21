@@ -1,5 +1,6 @@
-package com.innowise.userservice.dto;
+package com.innowise.userservice.dto.user;
 
+import com.innowise.userservice.dto.paymentcard.ResponsePaymentCardDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+public class ResponseUserDto {
 
     private Long id;
 
@@ -26,6 +27,6 @@ public class UserDTO {
 
     private Boolean active;
 
-    private List<PaymentCardDTO> paymentCards;
+    private List<ResponsePaymentCardDto> paymentCards;
 
 }

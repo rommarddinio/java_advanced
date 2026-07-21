@@ -1,4 +1,4 @@
-package com.innowise.userservice.dto;
+package com.innowise.userservice.dto.paymentcard;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentCardDTO {
+public class ResponsePaymentCardDto {
 
     private Long id;
 
