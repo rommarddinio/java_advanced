@@ -23,4 +23,7 @@ public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long>,
     @Query("SELECT COUNT(*) FROM User u WHERE u.id = :id")
     int countByUserId(Long id);
 
+    @Query("SELECT p.id FROM PaymentCard p WHERE p.user.id = :userId")
+    List<Long> findIdsByUserId(Long userId);
+
 }
