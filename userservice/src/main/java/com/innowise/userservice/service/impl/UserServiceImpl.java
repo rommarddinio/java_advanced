@@ -6,11 +6,13 @@ import com.innowise.userservice.dto.user.UpdateUserDto;
 import com.innowise.userservice.entity.User;
 import com.innowise.userservice.exception.UserNotFoundException;
 import com.innowise.userservice.mapper.UserMapper;
-import com.innowise.userservice.repository.PaymentCardRepository;
 import com.innowise.userservice.repository.UserRepository;
+import com.innowise.userservice.service.PaymentCardService;
 import com.innowise.userservice.service.UserService;
 import com.innowise.userservice.specification.UserSpecifications;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private PaymentCardRepository paymentCardRepository;
+    private final PaymentCardService paymentCardService;
 
     private final UserRepository userRepository;
 
@@ -37,7 +39,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(userRepository.save(user));
     }
 
-
+    @Cacheable(value = "user", key = "#id")
     @Override
     public ResponseUserDto getUserById(Long id) {
         return userMapper.toDto(userRepository.findById(id).orElseThrow(UserNotFoundException::new));
@@ -52,20 +54,23 @@ public class UserServiceImpl implements UserService {
                 .of(pageable.getPageNumber(), pageable.getPageSize())).map(userMapper::toDto);
     }
 
+    @CacheEvict(value = "user", key = "#id")
     @Transactional
     @Override
     public void activateUser(Long id) {
         userRepository.setActive(id, true);
     }
 
+    @CacheEvict(value = "user", key = "#id")
     @Transactional
     @Override
     public void deactivateUser(Long id) {
         userRepository.setActive(id, false);
 
-        paymentCardRepository.deactivateByUserId(id);
+        paymentCardService.deactivatePaymentCardsByUserId(id);
     }
 
+    @CacheEvict(value = "user", key = "#id")
     @Transactional
     @Override
     public ResponseUserDto updateUser(Long id, UpdateUserDto userDto) {
