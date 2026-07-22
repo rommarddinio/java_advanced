@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/changeset/create-index-on-users-table.sql
   - include:
       file: db/changelog/changeset/create-index-on-payment_cards-table.sql
+  - include:
+      file: db/changelog/changeset/change-number-type-in-payment-card-table.sql
