@@ -128,6 +128,10 @@ public class UserServiceImplTest {
 
     @Test
     void activateUser_ShouldReturnUpdatedRow_WhenSuccessful() {
+        user.setId(1L);
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
         userService.activateUser(1L);
 
         verify(userRepository).setActive(1L, true);
@@ -135,30 +139,38 @@ public class UserServiceImplTest {
 
     @Test
     void activateUser_ShouldThrowException_WhenNotFound() {
-        doThrow(new UserNotFoundException()).when(userRepository).setActive(99L, true);
+        user.setId(99L);
+
+        doThrow(new UserNotFoundException()).when(userRepository).findById(user.getId());
 
         assertThrows(UserNotFoundException.class,
-                () -> userService.activateUser(99L));
+                () -> userService.activateUser(user.getId()));
 
-        verify(userRepository).setActive(99L, true);
+        verify(userRepository).findById(user.getId());
     }
 
     @Test
     void deactivateUser_ShouldReturnUpdatedRow_WhenSuccessful() {
-        userService.deactivateUser(1L);
+        user.setId(1L);
 
-        verify(userRepository).setActive(1L, false);
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        userService.deactivateUser(user.getId());
+
+        verify(userRepository).setActive(user.getId(), false);
         verify(paymentCardService).deactivatePaymentCardsByUserId(1L);
     }
 
     @Test
     void deactivateUser_ShouldThrowException_WhenNotFound() {
-        doThrow(new UserNotFoundException()).when(userRepository).setActive(99L, false);
+        user.setId(99L);
+
+        doThrow(new UserNotFoundException()).when(userRepository).findById(user.getId());
 
         assertThrows(UserNotFoundException.class,
-                () -> userService.deactivateUser(99L));
+                () -> userService.deactivateUser(user.getId()));
 
-        verify(userRepository).setActive(99L, false);
+        verify(userRepository).findById(user.getId());
     }
 
     @Test
