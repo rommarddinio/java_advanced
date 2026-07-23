@@ -57,11 +57,13 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Override
     public ResponsePaymentCardDto getPaymentCardById(Long id) {
         return paymentCardMapper.toDto(paymentCardRepository.findById(id)
-                .orElseThrow());
+                .orElseThrow(CardNotFoundException::new));
     }
 
     @Override
     public List<ResponsePaymentCardDto> getPaymentCardsByUserId(Long userId) {
+        userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
         return paymentCardMapper.toDtoList(paymentCardRepository.findByUserId(userId));
     }
 

@@ -58,6 +58,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void activateUser(Long id) {
+        userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+
         userRepository.setActive(id, true);
     }
 
@@ -65,6 +67,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void deactivateUser(Long id) {
+        userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+
         userRepository.setActive(id, false);
 
         paymentCardService.deactivatePaymentCardsByUserId(id);
