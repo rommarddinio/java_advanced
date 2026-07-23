@@ -477,4 +477,20 @@ public class PaymentCardServiceImplTest {
         verifyNoInteractions(cacheManager);
     }
 
+    @Test
+    void deactivatePaymentCard_WhenUserCacheIsNull() {
+        paymentCard.setId(1L);
+        user.setId(5L);
+        paymentCard.setUser(user);
+
+        when(paymentCardRepository.findById(paymentCard.getId())).thenReturn(Optional.of(paymentCard));
+        when(cacheManager.getCache("user")).thenReturn(null);
+
+        paymentCardService.deactivatePaymentCard(paymentCard.getId());
+
+        verify(paymentCardRepository).findById(paymentCard.getId());
+        verify(paymentCardRepository).setActive(paymentCard.getId(), false);
+        verify(cacheManager).getCache("user");
+    }
+
 }
