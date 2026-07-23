@@ -44,6 +44,7 @@ jobs:
         uses: sonarsource/sonarcloud-github-action@v2
         with:
           args: >
+            -Dsonar.projectKey=rommarddinio_java_advanced
             -Dsonar.organization=rommarddinio
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
