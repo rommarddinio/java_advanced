@@ -5,12 +5,12 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - DB_URL=jdbc:postgresql://postgres:5432/userDB
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=postgres
-      - SPRING_REDIS_HOST=redis
-      - SPRING_REDIS_PORT=6379
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
+      - DB_URL=${DB_URL:-jdbc:postgresql://postgres:5432/userDB}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-default_password}
+      - SPRING_REDIS_HOST=${SPRING_REDIS_HOST:-redis}
+      - SPRING_REDIS_PORT=${SPRING_REDIS_PORT:-6379}
     ports:
       - "8080:8080"
     depends_on:
@@ -20,9 +20,9 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_DB: userDB
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      - POSTGRES_DB=${DB_NAME:-userDB}
+      - POSTGRES_USER=${DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-default_password}
     ports:
       - "5432:5432"
 
