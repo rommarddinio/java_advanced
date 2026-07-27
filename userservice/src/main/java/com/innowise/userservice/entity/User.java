@@ -7,10 +7,13 @@ import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(name = "users_email_key", columnNames = "email")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,6 +36,6 @@ public class User extends Auditable{
 
     @OneToMany(mappedBy = "user")
     @BatchSize(size = 5)
-    private Set<PaymentCard> paymentCards;
+    private Set<PaymentCard> paymentCards = new HashSet<>();
 
 }
