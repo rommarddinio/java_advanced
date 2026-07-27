@@ -2,6 +2,16 @@ spring:
   profiles:
     active: local
 
+logging:
+  level:
+    root: info
+    com.innowise.userservice: debug
+  file:
+    name: logs/userservice.log
+app:
+  cache:
+    ttl: 10m
+
 ---
 spring:
   config:

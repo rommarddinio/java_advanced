@@ -13,6 +13,7 @@ import com.innowise.userservice.repository.UserRepository;
 import com.innowise.userservice.service.PaymentCardService;
 import com.innowise.userservice.specification.PaymentCardSpecifications;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class PaymentCardServiceImpl implements PaymentCardService {
@@ -42,33 +44,50 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Transactional
     @Override
     public ResponsePaymentCardDto createPaymentCard(CreatePaymentCardDto paymentCardDto) {
+        log.info("Creating a new payment card for user with id = {}", paymentCardDto.getUserId());
         userRepository.findById(paymentCardDto.getUserId())
-                .orElseThrow(UserNotFoundException::new);
-        if (paymentCardRepository.countByUserId(paymentCardDto.getUserId()) >= 5)
+                .orElseThrow(() -> {
+                    log.warn("Failed to create card: User not found with id = {}", paymentCardDto.getUserId());
+                    return new UserNotFoundException();
+                });
+        if (paymentCardRepository.countByUserId(paymentCardDto.getUserId()) >= 5) {
+            log.warn("Failed to create card: User with id = {} has reached the limit of 5 cards", paymentCardDto.getUserId());
             throw new CardLimitException();
+        }
 
         PaymentCard paymentCard = paymentCardMapper.toEntity(paymentCardDto);
         paymentCard.setActive(true);
 
-        return paymentCardMapper.toDto(paymentCardRepository.save(paymentCard));
+        ResponsePaymentCardDto savedCard = paymentCardMapper.toDto(paymentCardRepository.save(paymentCard));
+        log.info("Successfully created payment card with id = {} for user id = {}", savedCard.getId(), paymentCardDto.getUserId());
+        return savedCard;
     }
 
     @Cacheable(value = "paymentCard", key = "#id")
     @Override
     public ResponsePaymentCardDto getPaymentCardById(Long id) {
+        log.debug("Cache miss: Fetching payment card from database with id = {}", id);
         return paymentCardMapper.toDto(paymentCardRepository.findById(id)
-                .orElseThrow(CardNotFoundException::new));
+                .orElseThrow(() -> {
+                    log.warn("Payment card not found with id = {}", id);
+                    return new CardNotFoundException();
+                }));
     }
 
     @Override
     public List<ResponsePaymentCardDto> getPaymentCardsByUserId(Long userId) {
-        userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        log.info("Fetching all payment cards for user with id = {}", userId);
+        userRepository.findById(userId).orElseThrow(() -> {
+            log.warn("Failed to fetch cards: User not found with id = {}", userId);
+            return new UserNotFoundException();
+        });
 
         return paymentCardMapper.toDtoList(paymentCardRepository.findByUserId(userId));
     }
 
     @Override
     public Page<ResponsePaymentCardDto> getPaymentCards(Pageable pageable, String name, String surname) {
+        log.info("Fetching page {} of payment cards with filters - name: {}, surname: {}", pageable.getPageNumber(), name, surname);
         Specification<PaymentCard> specification = Specification.where(PaymentCardSpecifications.hasUserName(name))
                 .and(PaymentCardSpecifications.hasUserSurname(surname));
 
@@ -80,14 +99,20 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Transactional
     @Override
     public void activatePaymentCard(Long id) {
+        log.info("Activating payment card with id = {}", id);
         PaymentCard card = paymentCardRepository.findById(id)
-                .orElseThrow(CardNotFoundException::new);
+                .orElseThrow(() -> {
+                    log.warn("Failed to activate card: Card not found with id = {}", id);
+                    return new CardNotFoundException();
+                });
 
         paymentCardRepository.setActive(id, true);
+        log.info("Payment card with id = {} successfully activated", id);
 
         Cache userCache = cacheManager.getCache("user");
         if (userCache != null) {
             userCache.evict(card.getUser().getId());
+            log.debug("Evicted user cache for user id = {} due to card activation", card.getUser().getId());
         }
     }
 
@@ -95,23 +120,31 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Transactional
     @Override
     public void deactivatePaymentCard(Long id) {
+        log.info("Deactivating payment card with id = {}", id);
         PaymentCard card = paymentCardRepository.findById(id)
-                .orElseThrow(CardNotFoundException::new);
+                .orElseThrow(() -> {
+                    log.warn("Failed to deactivate card: Card not found with id = {}", id);
+                    return new CardNotFoundException();
+                });
 
         paymentCardRepository.setActive(id, false);
+        log.info("Payment card with id = {} successfully deactivated", id);
 
         Cache userCache = cacheManager.getCache("user");
         if (userCache != null) {
             userCache.evict(card.getUser().getId());
+            log.debug("Evicted user cache for user id = {} due to card deactivation", card.getUser().getId());
         }
     }
 
     @Transactional
     @Override
     public void deactivatePaymentCardsByUserId(Long userId) {
+        log.info("Deactivating all payment cards for user with id = {}", userId);
         List<Long> ids = paymentCardRepository.findIdsByUserId(userId);
 
         paymentCardRepository.deactivateByUserId(userId);
+        log.info("Bulk deactivated cards in database for user with id = {}", userId);
 
         if (ids != null && !ids.isEmpty()) {
             Cache cardCache = cacheManager.getCache("paymentCard");
@@ -119,6 +152,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
                 for (Long cardId : ids) {
                     cardCache.evict(cardId);
                 }
+                log.debug("Evicted {} card keys from 'paymentCard' cache for user id = {}", ids.size(), userId);
             }
         }
     }
@@ -130,15 +164,24 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Transactional
     @Override
     public ResponsePaymentCardDto updatePaymentCard(Long id, UpdatePaymentCardDto paymentCardDto) {
+        log.info("Updating payment card with id = {}", id);
         PaymentCard paymentCard = paymentCardRepository.findById(id)
-                .orElseThrow(CardNotFoundException::new);
+                .orElseThrow(() -> {
+                    log.warn("Failed to update card: Card not found with id = {}", id);
+                    return new CardNotFoundException();
+                });
 
         paymentCard.setNumber(paymentCardDto.getNumber());
         paymentCard.setHolder(paymentCardDto.getHolder());
         paymentCard.setExpirationDate(paymentCardDto.getExpirationDate());
         paymentCard.setUser(userRepository.findById(paymentCardDto.getUserId()).
-                orElseThrow(UserNotFoundException::new));
+                orElseThrow(() -> {
+                    log.warn("Failed to update card: Assigned user not found with id = {}", paymentCardDto.getUserId());
+                    return new UserNotFoundException();
+                }));
 
-        return paymentCardMapper.toDto(paymentCardRepository.save(paymentCard));
+        ResponsePaymentCardDto updatedCard = paymentCardMapper.toDto(paymentCardRepository.save(paymentCard));
+        log.info("Payment card with id = {} successfully updated", id);
+        return updatedCard;
     }
 }
