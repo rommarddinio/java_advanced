@@ -4,7 +4,6 @@ import com.innowise.authenticationservice.details.UserDetailsImpl;
 import com.innowise.authenticationservice.entity.Credentials;
 import com.innowise.authenticationservice.repository.CredentialsRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final CredentialsRepository credentialsRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+    public UserDetailsImpl loadUserByUsername(String login) throws UsernameNotFoundException {
         Credentials credentials = credentialsRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException(String
                         .format("User with login %s is not found", login)));
