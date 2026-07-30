@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CredentialServiceImpl implements CredentialsService {
+public class CredentialsServiceImpl implements CredentialsService {
 
     private final CredentialsRepository credentialsRepository;
 
