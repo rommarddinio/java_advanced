@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CredentialServiceImpl implements CredentialsService {
 
-    private CredentialsRepository credentialsRepository;
+    private final CredentialsRepository credentialsRepository;
 
     @Override
     public void saveCredentials(Credentials credentials) {
