@@ -1,6 +1,12 @@
 spring:
   profiles:
     active: local
+logging:
+  level:
+    root: info
+    com.innowise.authenticationservice: debug
+  file:
+    name: logs/authenticationservice.log
 ---
 spring:
   config:
