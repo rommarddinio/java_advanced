@@ -41,10 +41,10 @@ jobs:
         run: mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -B
         working-directory: userservice
 
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v2
-        with:
-          args: >
+      - name : SonarCloud Scan
+        uses : sonarsource/sonarcloud-github-action@v4
+        with :
+          args : >
             -Dsonar.projectKey=rommarddinio_java_advanced
             -Dsonar.organization=rommarddinio
             -Dsonar.host.url=https://sonarcloud.io
