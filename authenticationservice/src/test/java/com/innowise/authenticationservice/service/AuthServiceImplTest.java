@@ -139,7 +139,7 @@ class AuthServiceImplTest {
 
         assertEquals("new-access-token", response.getToken());
         verify(tokenService).getTokenType(refreshToken);
-        verify(tokenService).getUserId(refreshToken);
+        verify(tokenService, times(2)).getUserId(refreshToken);
         verify(tokenService).getRole(refreshToken);
         verify(tokenService).generateAccessToken(1L, "ROLE_USER");
     }
