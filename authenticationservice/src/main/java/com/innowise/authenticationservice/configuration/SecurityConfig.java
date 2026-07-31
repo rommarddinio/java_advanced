@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity
+@SuppressWarnings("java:S4502")
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;

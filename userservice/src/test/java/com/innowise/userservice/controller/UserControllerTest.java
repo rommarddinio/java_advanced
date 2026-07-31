@@ -217,4 +217,11 @@ public class UserControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void deactivateUser_ShouldReturn403_WhenAccessDenied() throws Exception {
+        mockMvc.perform(patch("/users/1/deactivate")
+                .with(user(userRole)))
+                .andExpect(status().isForbidden());
+    }
+
 }

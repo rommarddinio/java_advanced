@@ -146,8 +146,8 @@ class TokenFilterTest {
         when(tokenService.getRole(token)).thenReturn("USER");
         when(tokenService.getTokenType(token)).thenReturn("REFRESH");
 
-        StringWriter responseWriter = new StringWriter();
-        when(response.getWriter()).thenReturn(new PrintWriter(responseWriter));
+        StringWriter writer = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
 
         tokenFilter.doFilterInternal(request, response, filterChain);
 

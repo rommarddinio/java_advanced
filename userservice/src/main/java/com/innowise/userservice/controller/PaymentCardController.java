@@ -59,8 +59,8 @@ public class PaymentCardController {
     }
 
     @GetMapping("/user/me")
-    public ResponseEntity<List<ResponsePaymentCardDto>> getPaymentCardsBySelfId(@PathVariable Long id) {
-        return ResponseEntity.ok(paymentCardService.getPaymentCardsByUserId(id));
+    public ResponseEntity<List<ResponsePaymentCardDto>> getPaymentCardsBySelfId(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(paymentCardService.getPaymentCardsByUserId(userDetails.getUserId()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
