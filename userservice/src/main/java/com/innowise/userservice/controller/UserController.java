@@ -1,5 +1,6 @@
 package com.innowise.userservice.controller;
 
+import com.innowise.userservice.details.UserDetailsImpl;
 import com.innowise.userservice.dto.user.CreateUserDto;
 import com.innowise.userservice.dto.user.ResponseUserDto;
 import com.innowise.userservice.dto.user.UpdateUserDto;
@@ -11,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +23,7 @@ public class UserController {
 
     private final UserService userService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<Page<ResponseUserDto>> getUsers(@PageableDefault Pageable pageable,
                                                           @RequestParam(required = false) String name,
@@ -27,9 +31,15 @@ public class UserController {
         return ResponseEntity.ok(userService.getUsers(pageable, name, surname));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseUserDto> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ResponseUserDto> getSelfById(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return new ResponseEntity<>(userService.getUserById(userDetails.getUserId()), HttpStatus.OK);
     }
 
     @PostMapping
@@ -38,6 +48,7 @@ public class UserController {
                 .body(userService.createUser(userDto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}/activate")
     public ResponseEntity<Void> activateUser(@PathVariable Long id) {
         userService.activateUser(id);
@@ -45,6 +56,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivateUser(@PathVariable Long id) {
         userService.deactivateUser(id);
@@ -52,6 +64,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ResponseUserDto> updateUser(@PathVariable Long id,
                                                       @RequestBody @Valid UpdateUserDto userDto) {
