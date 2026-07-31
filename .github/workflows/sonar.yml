@@ -44,7 +44,8 @@ jobs:
       - name : SonarCloud Scan - Authentication Service
         run : >
           mvn sonar:sonar
-          -Dsonar.projectKey=rommarddinio_java_advanced
+          -Dsonar.projectKey=rommarddinio_java_advanced_auth
+          -Dsonar.projectName="Authentication Service"
           -Dsonar.organization=rommarddinio
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}
@@ -55,7 +56,8 @@ jobs:
       - name : SonarCloud Scan - User Service
         run : >
           mvn sonar:sonar
-          -Dsonar.projectKey=rommarddinio_java_advanced
+          -Dsonar.projectKey=rommarddinio_java_advanced_user
+          -Dsonar.projectName="User Service"
           -Dsonar.organization=rommarddinio
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}

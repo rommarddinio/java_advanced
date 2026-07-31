@@ -330,4 +330,23 @@ public class PaymentControllerTest {
                         .param("size", "10"))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void createSelfPaymentCard_ShouldReturnCreatedCard_WhenSuccessful() throws Exception {
+        mockMvc.perform(post("/payment-cards/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createPaymentCardDto))
+                        .with(user(userRole)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(user.getId()));
+    }
+
+    @Test
+    void getPaymentCardsBySelfId_ShouldReturnListOfPaymentCardsForCurrentUser() throws Exception {
+        mockMvc.perform(get("/payment-cards/user/me")
+                        .with(user(userRole)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1));
+    }
+
 }

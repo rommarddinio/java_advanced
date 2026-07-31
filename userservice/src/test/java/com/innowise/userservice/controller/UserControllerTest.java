@@ -224,4 +224,13 @@ public class UserControllerTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test
+    void getSelfById_ShouldReturnUser_WhenSuccessful() throws Exception {
+        mockMvc.perform(get("/users/me")
+                .with(user(userRole)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Roman"))
+                .andExpect(jsonPath("$.email").value("roman@gmail.com"));
+    }
+
 }
