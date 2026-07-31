@@ -9,6 +9,8 @@ import com.innowise.authenticationservice.dto.response.TokenPayload;
 import com.innowise.authenticationservice.entity.Credentials;
 import com.innowise.authenticationservice.enums.Role;
 import com.innowise.authenticationservice.enums.TokenType;
+import com.innowise.authenticationservice.exception.EmptyTokenException;
+import com.innowise.authenticationservice.exception.InvalidTokenTypeException;
 import com.innowise.authenticationservice.service.AuthService;
 import com.innowise.authenticationservice.service.CredentialsService;
 import com.innowise.authenticationservice.service.TokenService;
@@ -74,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
         String token = extractToken(header);
 
         if (!tokenService.getTokenType(token).equals(TokenType.REFRESH.name())) {
-            return null;
+            throw new InvalidTokenTypeException();
         }
 
         String newAccessToken = tokenService.generateAccessToken(
@@ -85,7 +87,7 @@ public class AuthServiceImpl implements AuthService {
 
     private String extractToken(String header) {
         if (header == null || !header.startsWith("Bearer ")) {
-            return null;
+            throw new EmptyTokenException();
         }
         return header.substring(7);
     }
