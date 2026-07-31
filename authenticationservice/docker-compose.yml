@@ -1,0 +1,28 @@
+services:
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - JWT_SECRET=${JWT_SECRET:-secret}
+      - JWT_ACCESS_TIME=${JWT_ACCESS_TIME:-5m}
+      - JWT_REFRESH_TIME=${JWT_REFRESH_TIME:-3d}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
+      - DB_URL=${DB_URL:-jdbc:postgresql://postgres:5432/userDB}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-default_password}
+
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME:-authDB}
+      - POSTGRES_USER=${DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-default_password}
+    ports:
+      - "5433:5432"
