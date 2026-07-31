@@ -1,0 +1,64 @@
+name: sonar
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  sonarcloud:
+    name: Test and Sonar
+    runs-on: ubuntu-latest
+
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Run Tests and Generate Jacoco Reports for Authentication Service
+        run: mvn clean test jacoco:report -B
+        working-directory: authenticationservice
+
+      - name: Run Tests and Generate Jacoco Reports for User Service
+        run: mvn clean test jacoco:report -B
+        working-directory: userservice
+
+      - name: Copy dependencies for Authentication Service
+        run: mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -B
+        working-directory: authenticationservice
+
+      - name: Copy dependencies for User Service
+        run: mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -B
+        working-directory: userservice
+
+      - name : SonarCloud Scan - Authentication Service
+        run : >
+          mvn sonar:sonar
+          -Dsonar.projectKey=rommarddinio_java_advanced
+          -Dsonar.organization=rommarddinio
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+          -Dsonar.coverage.exclusions=**/dto/**,**/entity/**
+        working-directory : authenticationservice
+
+      - name : SonarCloud Scan - User Service
+        run : >
+          mvn sonar:sonar
+          -Dsonar.projectKey=rommarddinio_java_advanced
+          -Dsonar.organization=rommarddinio
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+          -Dsonar.coverage.exclusions=**/specification/**,**/dto/**,**/entity/**
+        working-directory : userservice
