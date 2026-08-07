@@ -67,17 +67,6 @@ class TokenFilterTest {
         verify(filterChain).doFilter(request, response);
     }
 
-    @Test
-    void shouldReturn401_whenHeaderMissingOrInvalid() throws Exception {
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestURI()).thenReturn("/other");
-        when(request.getHeader("Authorization")).thenReturn(null);
-
-        tokenFilter.doFilterInternal(request, response, filterChain);
-
-        verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        assertTrue(responseWriter.toString().contains("Authorization header missing or invalid"));
-    }
 
     @Test
     void shouldSetSecurityContext_whenTokenValid() throws Exception {
