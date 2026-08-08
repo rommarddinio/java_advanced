@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001
+      author: Roman
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey : true
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable : false
+              - column:
+                  name: status
+                  type: varchar(20)
+                  constraints:
+                    nullable : false
+              - column:
+                  name: total_price
+                  type: numeric(10,2)
+                  constraints:
+                    nullable : false
+              - column:
+                  name: deleted
+                  type: boolean
+                  defaultValueBoolean : false
