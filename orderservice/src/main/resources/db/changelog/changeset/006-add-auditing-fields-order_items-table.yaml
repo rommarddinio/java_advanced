@@ -1,0 +1,16 @@
+databaseChangeLog :
+  - changeSet :
+      id: 006
+      author: Roman
+      changes:
+        - addColumn:
+            tableName: order_items
+            columns:
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  constraints:
+                    nullable : false
+              - column:
+                  name: updated_at
+                  type: timestamptz

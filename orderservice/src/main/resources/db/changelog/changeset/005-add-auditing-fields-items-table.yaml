@@ -1,0 +1,16 @@
+databaseChangeLog :
+  - changeSet :
+      id: 005
+      author: Roman
+      changes:
+        - addColumn:
+            tableName: items
+            columns:
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  constraints:
+                    nullable : false
+              - column:
+                  name: updated_at
+                  type: timestamptz
