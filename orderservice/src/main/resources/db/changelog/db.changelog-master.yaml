@@ -11,3 +11,7 @@ databaseChangeLog :
       file: db/changelog/changeset/005-add-auditing-fields-items-table.yaml
   - include :
       file : db/changelog/changeset/006-add-auditing-fields-order_items-table.yaml
+  - include:
+      file: db/changelog/changeset/007-add-index-orders-table.yaml
+  - include:
+      file: db/changelog/changeset/008-add-indexes-order_items-table.yaml
