@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009
+      author: Roman
+      changes:
+        - addColumn:
+            tableName: items
+            columns:
+              - column:
+                  name: deleted
+                  type: boolean
+                  defaultValueBoolean : false
+                  constraints:
+                    nullable : false
