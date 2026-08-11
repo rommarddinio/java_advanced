@@ -1,0 +1,58 @@
+name: sonar
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  sonarcloud:
+    name: Test and Sonar
+    runs-on: ubuntu-latest
+
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Run Tests and Generate Jacoco Reports for Authentication Service
+        run: mvn clean test jacoco:report -B
+        working-directory: authenticationservice
+
+      - name: Run Tests and Generate Jacoco Reports for User Service
+        run: mvn clean test jacoco:report -B
+        working-directory: userservice
+
+      - name: Copy dependencies for Authentication Service
+        run: mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -B
+        working-directory: authenticationservice
+
+      - name: Copy dependencies for User Service
+        run: mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -B
+        working-directory: userservice
+
+      - name : SonarCloud Scan via Maven
+        run : >
+          mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          -f authenticationservice/pom.xml
+          -Dsonar.projectKey=rommarddinio_java_advanced
+          -Dsonar.organization=rommarddinio
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.sources=../authenticationservice/src/main/java,../userservice/src/main/java,../authenticationservice/target/generated-sources/annotations,../userservice/target/generated-sources/annotations
+          -Dsonar.tests=../authenticationservice/src/test/java,../userservice/src/test/java
+          -Dsonar.java.binaries=../authenticationservice/target/classes,../userservice/target/classes
+          -Dsonar.java.libraries=../authenticationservice/target/dependency/**/*.jar,../userservice/target/dependency/**/*.jar
+          -Dsonar.java.test.binaries=../authenticationservice/target/test-classes,../userservice/target/test-classes
+          -Dsonar.java.test.libraries=../authenticationservice/target/dependency/**/*.jar,../userservice/target/dependency/**/*.jar
+          -Dsonar.coverage.jacoco.xmlReportPaths=../authenticationservice/target/site/jacoco/jacoco.xml,../userservice/target/site/jacoco/jacoco.xml

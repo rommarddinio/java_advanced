@@ -1,6 +1,7 @@
 package com.innowise.userservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.innowise.userservice.details.UserDetailsImpl;
 import com.innowise.userservice.dto.paymentcard.ResponsePaymentCardDto;
 import com.innowise.userservice.dto.user.CreateUserDto;
 import com.innowise.userservice.dto.user.ResponseUserDto;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -25,6 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource(properties = {"JWT_SECRET=testsecret"})
 public class UserControllerTest {
 
     @Container
@@ -73,6 +77,10 @@ public class UserControllerTest {
 
     private UpdateUserDto updateUserDto;
 
+    private UserDetailsImpl userRole;
+
+    private UserDetailsImpl adminRole;
+
     @BeforeEach
 
     void setUp() {
@@ -85,6 +93,9 @@ public class UserControllerTest {
         user.setEmail("roman@gmail.com");
         user.setActive(true);
         user = userRepository.save(user);
+
+        userRole = new UserDetailsImpl(user.getId(), "ROLE_USER");
+        adminRole = new UserDetailsImpl(user.getId(), "ROLE_ADMIN");
 
         responseUserDto = new ResponseUserDto(1L, "Roman", "Sidorchuk",
                 LocalDate.of(2006, 2, 28), "roman@gmail.com", true,
@@ -121,6 +132,7 @@ public class UserControllerTest {
     @Test
     void updateUser_ShouldUpdatePaymentCard_WhenSuccessful() throws Exception {
         mockMvc.perform(put("/users/{id}", user.getId())
+                        .with(user(adminRole))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateUserDto)))
                 .andExpect(status().isOk())
@@ -132,6 +144,7 @@ public class UserControllerTest {
     @Test
     void updateUser_ShouldReturn404_WhenNotFound() throws Exception {
         mockMvc.perform(put("/users/999")
+                        .with(user(adminRole))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateUserDto)))
                 .andExpect(status().isNotFound());
@@ -139,7 +152,8 @@ public class UserControllerTest {
 
     @Test
     void findById_ShouldReturnPaymentCard_WhenSuccessful() throws Exception {
-        mockMvc.perform(get("/users/{id}", user.getId()))
+        mockMvc.perform(get("/users/{id}", user.getId())
+                        .with(user(adminRole)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Roman"))
                 .andExpect(jsonPath("$.email").value("roman@gmail.com"));
@@ -147,13 +161,15 @@ public class UserControllerTest {
 
     @Test
     void findById_ShouldReturn404_WhenNotFound() throws Exception {
-        mockMvc.perform(get("/users/99"))
+        mockMvc.perform(get("/users/99")
+                        .with(user(adminRole)))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void getUsers_ShouldReturnPaymentCardPage_WhenSuccessful() throws Exception {
         mockMvc.perform(get("/users")
+                        .with(user(adminRole))
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
@@ -166,7 +182,8 @@ public class UserControllerTest {
         user.setActive(false);
         userRepository.save(user);
 
-        mockMvc.perform(patch("/users/{id}/activate", user.getId()))
+        mockMvc.perform(patch("/users/{id}/activate", user.getId())
+                        .with(user(adminRole)))
                 .andExpect(status().isNoContent());
 
         User updated = userRepository.findById(user.getId()).orElseThrow();
@@ -175,7 +192,8 @@ public class UserControllerTest {
 
     @Test
     void activateUser_ShouldReturn404_WhenNotFound() throws Exception {
-        mockMvc.perform(patch("/users/99/activate"))
+        mockMvc.perform(patch("/users/99/activate")
+                        .with(user(adminRole)))
                 .andExpect(status().isNotFound());
     }
 
@@ -184,7 +202,8 @@ public class UserControllerTest {
         user.setActive(true);
         userRepository.save(user);
 
-        mockMvc.perform(patch("/users/{id}/deactivate", user.getId()))
+        mockMvc.perform(patch("/users/{id}/deactivate", user.getId())
+                        .with(user(adminRole)))
                 .andExpect(status().isNoContent());
 
         User updated = userRepository.findById(user.getId()).orElseThrow();
@@ -193,8 +212,25 @@ public class UserControllerTest {
 
     @Test
     void deactivateUser_ShouldReturn404_WhenNotFound() throws Exception {
-        mockMvc.perform(patch("/users/99/deactivate"))
+        mockMvc.perform(patch("/users/99/deactivate")
+                        .with(user(adminRole)))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deactivateUser_ShouldReturn403_WhenAccessDenied() throws Exception {
+        mockMvc.perform(patch("/users/1/deactivate")
+                .with(user(userRole)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getSelfById_ShouldReturnUser_WhenSuccessful() throws Exception {
+        mockMvc.perform(get("/users/me")
+                .with(user(userRole)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Roman"))
+                .andExpect(jsonPath("$.email").value("roman@gmail.com"));
     }
 
 }
