@@ -19,4 +19,6 @@ public class ResponseItemDto {
 
     private BigDecimal price;
 
+    private Boolean deleted;
+
 }
