@@ -32,11 +32,11 @@ jobs:
       - name: Run Tests and Generate Jacoco Reports for User Service
         run: mvn clean test jacoco:report -B
         working-directory: userservice
-        
+
       - name : Run Tests and Generate Jacoco Reports for Order Service
         run : mvn clean test jacoco:report -B
         working-directory : orderservice
-      
+
       - name: Copy dependencies for Authentication Service
         run: mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -B
         working-directory: authenticationservice
@@ -48,11 +48,11 @@ jobs:
       - name : Copy dependencies for Order Service
         run : mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -B
         working-directory : orderservice
-        
+
       - name : SonarCloud Scan via Maven
         run : >
           mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-          -f authenticationservice/pom.xml
+          -f orderservice/pom.xml
           -Dsonar.projectKey=rommarddinio_java_advanced
           -Dsonar.organization=rommarddinio
           -Dsonar.host.url=https://sonarcloud.io
