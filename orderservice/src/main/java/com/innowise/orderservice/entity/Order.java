@@ -19,7 +19,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE orders SET deleted = true WHERE id = ?")
-@SQLRestriction("deleted=true")
+@SQLRestriction("deleted=false")
 public class Order extends Auditable {
 
     @Id

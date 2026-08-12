@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE items SET deleted = true WHERE id = ?")
-@SQLRestriction(value = "deleted=true")
+@SQLRestriction(value = "deleted=false")
 public class Item extends Auditable {
 
     @Id
