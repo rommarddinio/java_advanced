@@ -1,6 +1,12 @@
 spring:
   profiles:
     active: local
+logging:
+  level:
+    root: info
+    com.innowise.orderservice: debug
+  file:
+    name: logs/orderservice.log
 ---
 spring:
   config:
