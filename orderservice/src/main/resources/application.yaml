@@ -1,7 +1,59 @@
-spring :
-  application :
-    name : orderservice
-  datasource :
-    url : ${DB_URL}
-    username : ${DB_USERNAME}
-    password : ${DB_PASSWORD}
+spring:
+  profiles:
+    active: local
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  liquibase:
+    enabled: true
+jwt:
+  secret: ${JWT_SECRET}
+server:
+  port: 8082
+services:
+  user:
+    url: ${USER_SERVICE_URL}
+resilience4j:
+  circuitbreaker:
+    instances:
+      userServiceCircuit:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  liquibase:
+    enabled: true
+jwt:
+  secret: ${JWT_SECRET}
+server:
+  port: 8082
+services:
+  user:
+    url: ${USER_SERVICE_URL}
+resilience4j:
+  circuitbreaker:
+    instances:
+      userServiceCircuit:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
