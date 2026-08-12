@@ -21,6 +21,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -112,5 +114,25 @@ public class UserServiceImpl implements UserService {
         ResponseUserDto updatedUser = userMapper.toDto(userRepository.save(user));
         log.info("User with id = {} successfully updated", id);
         return updatedUser;
+    }
+
+    @Cacheable(value = "user", key = "#email")
+    @Override
+    public ResponseUserDto findByEmail(String email) {
+        log.info("Searching user with {} email", email);
+        User user = userRepository.findByEmail(email).orElseThrow(() -> {
+            log.warn("User with email {} was not found", email);
+            return new UserNotFoundException();
+        });
+
+        ResponseUserDto userDto = userMapper.toDto(user);
+        log.info("User with email {} was successfully found", email);
+        return userDto;
+    }
+
+    @Override
+    public List<ResponseUserDto> findAllUsersByIds(List<Long> ids) {
+        log.info("Finding users by ids");
+        return userMapper.toDtoList(userRepository.findAllById(ids));
     }
 }
