@@ -35,7 +35,7 @@ public class Order extends Auditable {
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
-    private Boolean deleted;
+    private Boolean deleted = false;
 
     @OneToMany(mappedBy = "order")
     @BatchSize(size = 5)

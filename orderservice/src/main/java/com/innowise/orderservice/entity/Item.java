@@ -27,6 +27,6 @@ public class Item extends Auditable {
 
     private BigDecimal price;
 
-    private Boolean deleted;
+    private Boolean deleted = false;
 
 }

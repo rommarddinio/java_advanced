@@ -30,8 +30,6 @@ public class ItemServiceImpl implements ItemService {
         log.info("Request to create item");
         Item item = itemMapper.toEntity(createItemDto);
 
-        item.setDeleted(false);
-
         ResponseItemDto result = itemMapper.toDto(itemRepository.save(item));
         log.info("Item created successfully with id: {}", result.getId());
         return result;
