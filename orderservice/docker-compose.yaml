@@ -1,0 +1,26 @@
+services:
+
+  order-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
+      - DB_URL=jdbc:postgresql://postgres:5432/${DB_NAME}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-default_password}
+      - JWT_SECRET=${JWT_SECRET:-secret}
+      - USER_SERVICE_URL=http://user-service:8080/users
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME:-orderserviceDB}
+      - POSTGRES_USER=${DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-default_password}
+    ports:
+      - "5434:5432"

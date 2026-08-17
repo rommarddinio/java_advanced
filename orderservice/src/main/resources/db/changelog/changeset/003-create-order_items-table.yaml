@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003
+      author: Roman
+      changes:
+        - createTable:
+            tableName: order_items
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey : true
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_order_id
+                    references: orders(id)
+                    deleteCascade : true
+              - column:
+                  name: item_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_item_id
+                    references: items(id)
+                    deleteCascade : true
+              - column:
+                  name: quantity
+                  type: bigint
+                  constraints:
+                    nullable : false

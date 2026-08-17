@@ -1,0 +1,83 @@
+spring:
+  profiles:
+    active: local
+logging:
+  level:
+    root: info
+    com.innowise.orderservice: debug
+  file:
+    name: logs/orderservice.log
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  liquibase:
+    enabled: true
+jwt:
+  secret: ${JWT_SECRET}
+server:
+  port: 8082
+services:
+  user:
+    url: ${USER_SERVICE_URL}
+resilience4j:
+  circuitbreaker:
+    instances:
+      userServiceCircuit:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
+        ignore-exceptions:
+          - com.innowise.orderservice.exception.UserNotFoundException
+  retry:
+    instances:
+      userServiceCircuit:
+        maxAttempts: 3
+        waitDuration: 200ms
+        ignore-exceptions :
+          - com.innowise.orderservice.exception.UserNotFoundException
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  liquibase:
+    enabled: true
+jwt:
+  secret: ${JWT_SECRET}
+server:
+  port: 8082
+services:
+  user:
+    url: ${USER_SERVICE_URL}
+resilience4j:
+  circuitbreaker:
+    instances:
+      userServiceCircuit:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
+        ignore-exceptions :
+          - com.innowise.orderservice.exception.UserNotFoundException
+  retry :
+    instances :
+      userServiceCircuit :
+        maxAttempts : 3
+        waitDuration : 200ms
+        ignore-exceptions :
+          - com.innowise.orderservice.exception.UserNotFoundException

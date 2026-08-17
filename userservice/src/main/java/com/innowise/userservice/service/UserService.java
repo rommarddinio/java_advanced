@@ -6,6 +6,8 @@ import com.innowise.userservice.dto.user.UpdateUserDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface UserService {
 
     ResponseUserDto createUser(CreateUserDto userDTO);
@@ -19,5 +21,9 @@ public interface UserService {
     void deactivateUser(Long id);
 
     ResponseUserDto updateUser(Long id, UpdateUserDto userDTO);
+
+    ResponseUserDto findByEmail(String email);
+
+    List<ResponseUserDto> findAllUsersByIds(List<Long> ids);
 
 }

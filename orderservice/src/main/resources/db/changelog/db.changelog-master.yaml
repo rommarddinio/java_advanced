@@ -1,0 +1,19 @@
+databaseChangeLog :
+  - include :
+      file : db/changelog/changeset/001-create-orders-table.yaml
+  - include:
+      file: db/changelog/changeset/002-create-items-table.yaml
+  - include:
+      file: db/changelog/changeset/003-create-order_items-table.yaml
+  - include:
+      file: db/changelog/changeset/004-add-auditing-fields-orders-table.yaml
+  - include:
+      file: db/changelog/changeset/005-add-auditing-fields-items-table.yaml
+  - include :
+      file : db/changelog/changeset/006-add-auditing-fields-order_items-table.yaml
+  - include:
+      file: db/changelog/changeset/007-add-index-orders-table.yaml
+  - include:
+      file: db/changelog/changeset/008-add-indexes-order_items-table.yaml
+  - include:
+      file: db/changelog/changeset/009-add-deleted-column-items-table.yaml

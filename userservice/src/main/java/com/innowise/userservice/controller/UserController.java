@@ -16,6 +16,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -71,4 +73,15 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping("/search")
+    public ResponseEntity<ResponseUserDto> findByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(userService.findByEmail(email));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/batch")
+    public ResponseEntity<List<ResponseUserDto>> findAllUsersByIds(@RequestBody List<Long> ids) {
+        return ResponseEntity.ok(userService.findAllUsersByIds(ids));
+    }
 }
