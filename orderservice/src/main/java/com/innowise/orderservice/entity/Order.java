@@ -26,13 +26,14 @@ public class Order extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
     private Status status;
 
-    @Column(name = "total_price")
+    @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
 
     private Boolean deleted = false;

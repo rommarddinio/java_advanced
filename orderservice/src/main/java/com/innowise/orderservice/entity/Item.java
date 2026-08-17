@@ -22,9 +22,10 @@ public class Item extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private BigDecimal price;
 
     private Boolean deleted = false;
