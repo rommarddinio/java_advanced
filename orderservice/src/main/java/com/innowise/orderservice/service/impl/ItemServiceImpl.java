@@ -44,8 +44,7 @@ public class ItemServiceImpl implements ItemService {
             return new ItemNotFoundException();
         });
 
-        item.setName(updateItemDto.getName());
-        item.setPrice(updateItemDto.getPrice());
+        itemMapper.updateFromDto(updateItemDto, item);
 
         ResponseItemDto result = itemMapper.toDto(itemRepository.save(item));
         log.info("Item with id {} updated successfully", id);
