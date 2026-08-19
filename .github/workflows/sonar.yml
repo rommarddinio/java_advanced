@@ -72,3 +72,4 @@ jobs:
           -Dsonar.java.test.binaries=../authenticationservice/target/test-classes,../userservice/target/test-classes,../orderservice/target/test-classes,../apigateway/target/test-classes
           -Dsonar.java.test.libraries=../authenticationservice/target/dependency/**/*.jar,../userservice/target/dependency/**/*.jar,../orderservice/target/dependency/**/*.jar,../apigateway/target/dependency/**/*.jar
           -Dsonar.coverage.jacoco.xmlReportPaths=../authenticationservice/target/site/jacoco/jacoco.xml,../userservice/target/site/jacoco/jacoco.xml,../orderservice/target/site/jacoco/jacoco.xml,../apigateway/target/site/jacoco/jacoco.xml
+          -Dsonar.exclusions=**/apigateway/client/**,**/apigateway/configuration/**
