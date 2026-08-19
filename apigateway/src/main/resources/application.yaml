@@ -1,3 +1,27 @@
 spring :
   application :
     name : apigateway
+  cloud:
+    gateway:
+      routes:
+        - id: user-route
+          uri: ${USER_SERVICE}
+          predicates:
+            - Path=/users/**,/payment-cards/**
+        - id: auth-route
+          uri: ${AUTH_SERVICE}
+          predicates:
+            - Path=/auth/**
+        - id: order-route
+          uri: ${ORDER_SERVICE}
+          predicates:
+            - Path=/orders/**,/items/**
+server :
+  port : 8083
+services:
+  auth:
+    url: ${AUTH_SERVICE:http://localhost:8081}
+  user:
+    url: ${USER_SERVICE:http://localhost:8080}
+internal:
+  secret: ${SERVICE_SECRET}
