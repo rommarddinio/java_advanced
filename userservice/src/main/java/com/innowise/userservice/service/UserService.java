@@ -26,4 +26,6 @@ public interface UserService {
 
     List<ResponseUserDto> findAllUsersByIds(List<Long> ids);
 
+    void deleteUser(Long userId);
+
 }

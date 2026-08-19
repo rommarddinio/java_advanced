@@ -33,7 +33,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUsers(pageable, name, surname));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseUserDto> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
@@ -84,4 +84,12 @@ public class UserController {
     public ResponseEntity<List<ResponseUserDto>> findAllUsersByIds(@RequestBody List<Long> ids) {
         return ResponseEntity.ok(userService.findAllUsersByIds(ids));
     }
+
+    @PreAuthorize("hasRole('SERVICE')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -135,4 +135,10 @@ public class UserServiceImpl implements UserService {
         log.info("Finding users by ids");
         return userMapper.toDtoList(userRepository.findAllById(ids));
     }
+
+    @Override
+    public void deleteUser(Long userId) {
+        log.info("Deleting user with id = {}", userId);
+        userRepository.deleteById(userId);
+    }
 }
