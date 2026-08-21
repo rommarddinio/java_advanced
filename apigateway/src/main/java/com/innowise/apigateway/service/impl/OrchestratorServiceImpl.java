@@ -14,6 +14,7 @@ import com.innowise.apigateway.service.TokenService;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.reactor.ratelimiter.operator.RateLimiterOperator;
+import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
@@ -94,6 +95,7 @@ public class OrchestratorServiceImpl implements OrchestratorService {
                 .onErrorResume(RequestNotPermitted.class, e -> handleLoginRateLimitFallback(request, e));
     }
 
+    @Generated
     private Mono<RegisterResponse> handleRegisterFallback(RegisterRequest request, Throwable t) {
         if (t instanceof DeactivatedUserException) {
             throw (DeactivatedUserException) t;
@@ -102,11 +104,13 @@ public class OrchestratorServiceImpl implements OrchestratorService {
         return Mono.error(new ServiceException(HttpStatus.SERVICE_UNAVAILABLE, "Registration failed"));
     }
 
+    @Generated
     private Mono<RegisterResponse> handleRegisterRateLimitFallback(RegisterRequest request, RequestNotPermitted e) {
         log.warn("Registration Rate Limiter triggered! Blocked request for spam protection.");
         return Mono.error(new ServiceException(HttpStatus.TOO_MANY_REQUESTS, "Too many registration attempts. Please try again later"));
     }
 
+    @Generated
     private Mono<LoginResponse> handleLoginCircuitFallback(LoginRequest request, Throwable t) {
         if (t instanceof DeactivatedUserException) {
             throw (DeactivatedUserException) t;
@@ -115,6 +119,7 @@ public class OrchestratorServiceImpl implements OrchestratorService {
         return Mono.error(new ServiceException(HttpStatus.SERVICE_UNAVAILABLE, "Login failed"));
     }
 
+    @Generated
     private Mono<LoginResponse> handleLoginRateLimitFallback(LoginRequest request, RequestNotPermitted e) {
         log.warn("Login Rate Limiter triggered! Blocked request for spam protection.");
         return Mono.error(new ServiceException(HttpStatus.TOO_MANY_REQUESTS, "Too many login attempts. Please try again later"));
