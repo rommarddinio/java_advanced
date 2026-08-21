@@ -26,8 +26,11 @@ services:
 internal:
   secret: ${SERVICE_SECRET}
 logging:
+  level:
+    root: info
+    com.innowise.apigateway: debug
   file:
-    path: logs/apigateway.log
+    name: logs/apigateway.log
 resilience4j:
   ratelimiter:
     instances:
