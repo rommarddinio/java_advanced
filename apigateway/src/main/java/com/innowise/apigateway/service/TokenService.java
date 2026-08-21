@@ -8,7 +8,7 @@ public interface TokenService {
 
     Long getUserId(String token);
 
-    String getRole(String role);
+    String getRole(String token);
 
     String getTokenType(String token);
 
