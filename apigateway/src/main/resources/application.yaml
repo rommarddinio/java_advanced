@@ -25,3 +25,31 @@ services:
     url: ${USER_SERVICE:http://localhost:8080}
 internal:
   secret: ${SERVICE_SECRET}
+logging:
+  file:
+    path: logs/apigateway.log
+resilience4j:
+  ratelimiter:
+    instances:
+      loginRateLimiter:
+        limitForPeriod: 2
+        limitRefreshPeriod: 5s
+        timeoutDuration: 0ms
+      registrationRateLimiter:
+        limitForPeriod: 3
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0ms
+  circuitbreaker:
+    instances:
+      registrationCircuit:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        ignore-exceptions:
+          - com.innowise.apigateway.exception.DeactivatedUserException
+      loginCircuit:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        ignore-exceptions:
+          - com.innowise.apigateway.exception.DeactivatedUserException
