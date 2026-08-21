@@ -35,8 +35,8 @@ resilience4j:
   ratelimiter:
     instances:
       loginRateLimiter:
-        limitForPeriod: 2
-        limitRefreshPeriod: 5s
+        limitForPeriod: 10
+        limitRefreshPeriod: 1s
         timeoutDuration: 0ms
       registrationRateLimiter:
         limitForPeriod: 3
