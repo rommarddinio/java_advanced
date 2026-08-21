@@ -9,16 +9,21 @@ import com.innowise.apigateway.dto.response.UserResponse;
 import com.innowise.apigateway.dto.response.UserStatusResponse;
 import com.innowise.apigateway.exception.DeactivatedUserException;
 import com.innowise.apigateway.service.TokenService;
+import io.github.resilience4j.ratelimiter.RateLimiter;
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDate;
+import java.util.function.Function;
 
 import static org.mockito.Mockito.*;
 
@@ -34,6 +39,12 @@ class OrchestratorServiceImplTest {
     @Mock
     private TokenService tokenService;
 
+    @Mock
+    private ReactiveCircuitBreakerFactory<?, ?> circuitBreakerFactory;
+
+    @Mock
+    private RateLimiterRegistry rateLimiterRegistry;
+
     @InjectMocks
     private OrchestratorServiceImpl orchestratorService;
 
@@ -47,6 +58,7 @@ class OrchestratorServiceImplTest {
 
     LoginResponse loginResponse;
 
+    @SuppressWarnings("unchecked")
     @BeforeEach
     void setUp() {
         registerRequest = new RegisterRequest(
@@ -77,6 +89,14 @@ class OrchestratorServiceImplTest {
                 "access-token",
                 "refresh-token"
         );
+
+        ReactiveCircuitBreaker mockCircuitBreaker = mock(ReactiveCircuitBreaker.class);
+        when(circuitBreakerFactory.create(anyString())).thenReturn(mockCircuitBreaker);
+        when(mockCircuitBreaker.run(any(Mono.class), any(Function.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        RateLimiter mockRateLimiter = mock(RateLimiter.class);
+        when(rateLimiterRegistry.rateLimiter(anyString())).thenReturn(mockRateLimiter);
     }
 
     @Test
