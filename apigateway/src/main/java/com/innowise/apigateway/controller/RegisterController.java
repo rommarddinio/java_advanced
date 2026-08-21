@@ -24,7 +24,7 @@ public class RegisterController {
     }
 
     @PostMapping("/login")
-    public Mono<LoginResponse> login(@RequestBody LoginRequest request) {
+    public Mono<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
         return orchestratorService.login(request);
     }
 

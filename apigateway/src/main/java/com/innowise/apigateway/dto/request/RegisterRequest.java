@@ -22,7 +22,9 @@ public record RegisterRequest(
         @Email(message = "Email should be valid")
         String email,
 
+        @NotBlank(message = "Login should not be empty")
         String login,
 
+        @NotBlank(message = "Password should not be empty")
         String password
 ) {}
