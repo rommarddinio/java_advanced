@@ -1,0 +1,102 @@
+services:
+
+  api-gateway:
+    build:
+      context: ./apigateway
+      dockerfile: Dockerfile
+    environment:
+      - USER_SERVICE=${USER_SERVICE:-http://user-service:8080}
+      - AUTH_SERVICE=${AUTH_SERVICE:-http://auth-service:8081}
+      - ORDER_SERVICE=${ORDER_SERVICE:-http://order-service:8082}
+      - SERVICE_SECRET=${SERVICE_SECRET:-default_secret}
+      - JWT_SECRET=${JWT_SECRET:-rFJ8mYk2YcPz6w0QvV2J0s3vQ8j8XzqV2d1v7cZp8xQ=}
+    ports:
+      - "8083:8083"
+    depends_on:
+      - user-service
+      - auth-service
+      - order-service
+
+  user-service:
+    build:
+      context: ./userservice
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
+      - DB_URL=${USER_DB_URL:-jdbc:postgresql://user-postgres:5432/userDB}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-default_password}
+      - SPRING_REDIS_HOST=${SPRING_REDIS_HOST:-redis}
+      - SPRING_REDIS_PORT=${SPRING_REDIS_PORT:-6379}
+      - JWT_SECRET=${JWT_SECRET:-rFJ8mYk2YcPz6w0QvV2J0s3vQ8j8XzqV2d1v7cZp8xQ=}
+      - SERVICE_SECRET=${SERVICE_SECRET:-default_secret}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-postgres
+      - redis
+
+  auth-service:
+    build:
+      context: ./authenticationservice
+      dockerfile: Dockerfile
+    environment:
+      - JWT_SECRET=${JWT_SECRET:-rFJ8mYk2YcPz6w0QvV2J0s3vQ8j8XzqV2d1v7cZp8xQ=}
+      - JWT_ACCESS_TIME=${JWT_ACCESS_TIME:-5m}
+      - JWT_REFRESH_TIME=${JWT_REFRESH_TIME:-3d}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
+      - DB_URL=${AUTH_DB_URL:-jdbc:postgresql://auth-postgres:5432/authDB}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-default_password}
+    ports:
+      - "8081:8081"
+    depends_on:
+      - auth-postgres
+
+  order-service:
+    build:
+      context: ./orderservice
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
+      - DB_URL=${ORDER_DB_URL:-jdbc:postgresql://order-postgres:5432/orderDB}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-default_password}
+      - JWT_SECRET=${JWT_SECRET:-rFJ8mYk2YcPz6w0QvV2J0s3vQ8j8XzqV2d1v7cZp8xQ=}
+      - USER_SERVICE_URL=${USER_SERVICE_URL:-http://user-service:8080/users}
+    ports:
+      - "8082:8082"
+    depends_on:
+      - order-postgres
+
+  user-postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=${USER_DB_NAME:-userDB}
+      - POSTGRES_USER=${DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-default_password}
+    ports:
+      - "5432:5432"
+
+  auth-postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=${AUTH_DB_NAME:-authDB}
+      - POSTGRES_USER=${DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-default_password}
+    ports:
+      - "5433:5432"
+
+  order-postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=${ORDER_DB_NAME:-orderDB}
+      - POSTGRES_USER=${DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-default_password}
+    ports:
+      - "5434:5432"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"

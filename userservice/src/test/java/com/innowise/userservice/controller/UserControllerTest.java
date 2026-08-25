@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(properties = {"JWT_SECRET=testsecret"})
+@TestPropertySource(properties = {"JWT_SECRET=testsecret", "SERVICE_SECRET=secret"})
 public class UserControllerTest {
 
     @Container
