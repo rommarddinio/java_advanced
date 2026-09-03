@@ -8,6 +8,7 @@ services:
       - USER_SERVICE=${USER_SERVICE:-http://user-service:8080}
       - AUTH_SERVICE=${AUTH_SERVICE:-http://auth-service:8081}
       - ORDER_SERVICE=${ORDER_SERVICE:-http://order-service:8082}
+      - PAYMENT_SERVICE=${PAYMENT_SERVICE:-http://payment-service:8084}
       - SERVICE_SECRET=${SERVICE_SECRET:-default_secret}
       - JWT_SECRET=${JWT_SECRET:-rFJ8mYk2YcPz6w0QvV2J0s3vQ8j8XzqV2d1v7cZp8xQ=}
     ports:
@@ -16,6 +17,7 @@ services:
       - user-service
       - auth-service
       - order-service
+      - payment-service
 
   user-service:
     build:
@@ -68,6 +70,22 @@ services:
       - "8082:8082"
     depends_on:
       - order-postgres
+  
+  payment-service :
+    container_name : paymentservice
+    build :
+      context : ./paymentservice
+      dockerfile : Dockerfile
+    environment :
+      - MONGODB_URL=${MONGODB_URL:-mongodb://mongodb:27017/paymentservicedb}
+      - RANDOM_NUMBER_URL=${RANDOM_NUMBER_URL:-https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new}
+      - JWT_SECRET=${JWT_SECRET:-rOooOOO2YcPz6w0QOOOO0s3vQ8j8XzqV2d1v7cZp8xQ=}
+      - KAFKA_HOST=${KAFKA_HOST:-kafka:9092}
+    ports :
+      - "8084:8084"
+    depends_on :
+      - kafka
+      - mongodb
 
   user-postgres:
     image: postgres
@@ -100,3 +118,27 @@ services:
     image: redis
     ports:
       - "6379:6379"
+
+  kafka :
+    image : apache/kafka:3.7.0
+    container_name : kafka
+    ports :
+      - "9092:9092"
+      - "9094:9094"
+    environment :
+      KAFKA_NODE_ID : 1
+      KAFKA_PROCESS_ROLES : broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS : 1@localhost:9093
+      KAFKA_LISTENERS : INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:9094,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS : INTERNAL://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_CONTROLLER_LISTENER_NAMES : CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP : INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME : INTERNAL
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE : "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR : 1
+
+  mongodb :
+    image : mongodb/mongodb-atlas-local
+    container_name : mongodb
+    ports :
+      - "27017:27017"
