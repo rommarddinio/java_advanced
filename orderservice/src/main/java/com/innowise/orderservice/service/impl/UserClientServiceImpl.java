@@ -5,6 +5,7 @@ import com.innowise.orderservice.dto.user.ResponseUserDto;
 import com.innowise.orderservice.exception.UserNotFoundException;
 import com.innowise.orderservice.service.UserClientService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class UserClientServiceImpl implements UserClientService {
 
     private static final String USER_SERVICE = "userServiceCircuit";
 
+    @Retry(name = USER_SERVICE)
     @CircuitBreaker(name = USER_SERVICE, fallbackMethod = "userNotFoundByEmailFallback")
     public ResponseUserDto findUserByEmail(String email) {
         log.info("Requesting user by email via Rest Client");
@@ -32,6 +34,7 @@ public class UserClientServiceImpl implements UserClientService {
         }
     }
 
+    @Retry(name = USER_SERVICE)
     @CircuitBreaker(name = USER_SERVICE, fallbackMethod = "userNotFoundByIdFallback")
     public ResponseUserDto findUserById(Long id) {
         log.info("Requesting user by id: {} via Rest Client", id);
@@ -43,6 +46,7 @@ public class UserClientServiceImpl implements UserClientService {
         }
     }
 
+    @Retry(name = USER_SERVICE)
     @CircuitBreaker(name = USER_SERVICE, fallbackMethod = "userNotFoundBySelfIdFallback")
     public ResponseUserDto findUserBySelfId() {
         log.info("Requesting current user by self id via Rest Client");
@@ -54,6 +58,7 @@ public class UserClientServiceImpl implements UserClientService {
         }
     }
 
+    @Retry(name = USER_SERVICE)
     @CircuitBreaker(name = USER_SERVICE, fallbackMethod = "userListFallback")
     public List<ResponseUserDto> findAllUsersById(List<Long> ids) {
         log.info("Requesting users list by ids: {} via Rest Client", ids);

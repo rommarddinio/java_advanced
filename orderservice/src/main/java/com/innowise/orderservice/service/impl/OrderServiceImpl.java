@@ -63,7 +63,6 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderItemList(orderItems);
         order.setTotalPrice(calculateTotalPrice(orderItems));
         order.setStatus(Status.NEW);
-        order.setDeleted(false);
 
         ResponseOrderDto orderDto = orderMapper.toDto(orderRepository.save(order));
         orderDto.setUser(userDto);
