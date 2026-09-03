@@ -35,6 +35,8 @@ resilience4j:
         failureRateThreshold: 50
         waitDurationInOpenState: 10s
         permittedNumberOfCallsInHalfOpenState: 2
+kafka:
+  uri: ${KAFKA_URI}
 ---
 spring:
   config:
@@ -63,3 +65,5 @@ resilience4j:
         failureRateThreshold: 50
         waitDurationInOpenState: 10s
         permittedNumberOfCallsInHalfOpenState: 2
+kafka:
+  uri: ${KAFKA_URI}

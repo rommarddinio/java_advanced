@@ -45,7 +45,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {
         "JWT_SECRET=testsecret",
-        "USER_SERVICE_URL=service"
+        "USER_SERVICE_URL=service",
+        "KAFKA_URI=localhost:9094"
 })
 @AutoConfigureMockMvc
 @WireMockTest
@@ -189,12 +190,6 @@ public class OrderControllerImplTest {
 
     @Test
     void updateById_ShouldReturnOrderDto_WhenSuccessful() throws Exception {
-        wireMockExtension.stubFor(WireMock.get(urlPathEqualTo("/" + order.getUserId()))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsBytes(userInfo))));
-
         mockMvc.perform(patch("/orders/{id}", order.getId())
                         .with(user(admin))
                         .contentType("application/json")
@@ -203,28 +198,7 @@ public class OrderControllerImplTest {
     }
 
     @Test
-    void updateById_ShouldReturn404_WhenUserNotFound() throws Exception {
-        order.setUserId(99L);
-        order = orderRepository.save(order);
-        wireMockExtension.stubFor(WireMock.get(urlPathEqualTo("/" + order.getUserId()))
-                .willReturn(aResponse()
-                        .withStatus(404)));
-
-        mockMvc.perform(patch("/orders/{id}", order.getId())
-                        .with(user(admin))
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(status)))
-                .andExpect(status().isNotFound());
-
-    }
-
-    @Test
     void updateById_ShouldReturn404_WhenOrderNotFound() throws Exception {
-        wireMockExtension.stubFor(WireMock.get(urlPathEqualTo("/" + order.getUserId()))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsBytes(userInfo))));
 
         mockMvc.perform(patch("/orders/{id}", 99L)
                         .with(user(admin))
@@ -236,11 +210,6 @@ public class OrderControllerImplTest {
     @Test
     void updateById_ShouldReturn400_WhenStatusIsNotValid() throws Exception {
         status = "BEBRA";
-        wireMockExtension.stubFor(WireMock.get(urlPathEqualTo("/" + order.getUserId()))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsBytes(userInfo))));
 
         mockMvc.perform(patch("/orders/{id}", order.getId())
                         .with(user(admin))
