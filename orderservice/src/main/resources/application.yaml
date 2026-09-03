@@ -35,6 +35,15 @@ resilience4j:
         failureRateThreshold: 50
         waitDurationInOpenState: 10s
         permittedNumberOfCallsInHalfOpenState: 2
+        ignore-exceptions:
+          - com.innowise.orderservice.exception.UserNotFoundException
+  retry:
+    instances:
+      userServiceCircuit:
+        maxAttempts: 3
+        waitDuration: 200ms
+        ignore-exceptions :
+          - com.innowise.orderservice.exception.UserNotFoundException
 kafka:
   uri: ${KAFKA_URI}
 ---
@@ -65,5 +74,14 @@ resilience4j:
         failureRateThreshold: 50
         waitDurationInOpenState: 10s
         permittedNumberOfCallsInHalfOpenState: 2
+        ignore-exceptions :
+          - com.innowise.orderservice.exception.UserNotFoundException
+  retry :
+    instances :
+      userServiceCircuit :
+        maxAttempts : 3
+        waitDuration : 200ms
+        ignore-exceptions :
+          - com.innowise.orderservice.exception.UserNotFoundException
 kafka:
   uri: ${KAFKA_URI}
