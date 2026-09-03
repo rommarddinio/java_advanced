@@ -73,7 +73,7 @@ jobs:
           -Dsonar.organization=rommarddinio
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}
-          -Dsonar.sources=../authenticationservice/src/main/java,../userservice/src/main/java,../orderservice/src/main/java,../apigateway/src/main/java,../paymentservice/src/main/java../authenticationservice/target/generated-sources/annotations,../userservice/target/generated-sources/annotations,../orderservice/target/generated-sources/annotations,../apigateway/target/generated-sources/annotations,../paymentservice/target/generated-sources/annotations
+          -Dsonar.sources=../authenticationservice/src/main/java,../userservice/src/main/java,../orderservice/src/main/java,../apigateway/src/main/java,../paymentservice/src/main/java,../authenticationservice/target/generated-sources/annotations,../userservice/target/generated-sources/annotations,../orderservice/target/generated-sources/annotations,../apigateway/target/generated-sources/annotations,../paymentservice/target/generated-sources/annotations
           -Dsonar.tests=../authenticationservice/src/test/java,../userservice/src/test/java,../orderservice/src/test/java,../apigateway/src/test/java,../paymentservice/src/test/java
           -Dsonar.java.binaries=../authenticationservice/target/classes,../userservice/target/classes,../orderservice/target/classes,../apigateway/target/classes,../paymentservice/target/classes
           -Dsonar.java.libraries=../authenticationservice/target/dependency/**/*.jar,../userservice/target/dependency/**/*.jar,../orderservice/target/dependency/**/*.jar,../apigateway/target/dependency/**/*.jar,../paymentservice/target/dependency/**/*.jar
