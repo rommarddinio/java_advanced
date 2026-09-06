@@ -16,6 +16,10 @@ spring :
           uri: ${ORDER_SERVICE}
           predicates:
             - Path=/orders/**,/items/**
+        - id: payment-route
+          uri: ${PAYMENT_SERVICE}
+          predicates:
+            - Path=/payments/**
 server :
   port : 8083
 services:

@@ -136,7 +136,6 @@ class OrderServiceImplTest {
     @Test
     void updateById_ShouldReturnOrderDto_WhenSuccessful() {
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
-        when(userClientService.findUserById(order.getUserId())).thenReturn(userInfo);
         when(orderMapper.toDto(order)).thenReturn(orderDto);
         when(orderRepository.save(order)).thenReturn(order);
 
@@ -157,7 +156,6 @@ class OrderServiceImplTest {
     @Test
     void updateById_ShouldThrowInvalidOrderStatusException_WhenStatusInvalid() {
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
-        when(userClientService.findUserById(order.getUserId())).thenReturn(userInfo);
 
         assertThrows(InvalidOrderStatusException.class,
                 () -> orderService.updateById(1L, null));
