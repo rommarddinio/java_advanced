@@ -66,6 +66,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-default_password}
       - JWT_SECRET=${JWT_SECRET:-rFJ8mYk2YcPz6w0QvV2J0s3vQ8j8XzqV2d1v7cZp8xQ=}
       - USER_SERVICE_URL=${USER_SERVICE_URL:-http://user-service:8080/users}
+      - KAFKA_URI=${KAFKA_URI:-kafka:9092}
     ports:
       - "8082:8082"
     depends_on:
