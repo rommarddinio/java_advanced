@@ -80,7 +80,6 @@ public class OrderServiceImpl implements OrderService {
             return new OrderNotFoundException();
         });
 
-        ResponseUserDto userDto = userClientService.findUserById(order.getUserId());
         if (!Status.isValid(status)) {
             log.error("Invalid order status: {} for order id: {}", status, id);
             throw new InvalidOrderStatusException();
@@ -88,7 +87,6 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(status);
 
         ResponseOrderDto orderDto = orderMapper.toDto(orderRepository.save(order));
-        orderDto.setUser(userDto);
 
         log.info("Order with id {} updated successfully", id);
         return orderDto;
@@ -176,6 +174,10 @@ public class OrderServiceImpl implements OrderService {
         }
         orderRepository.deleteById(id);
         log.info("Order with id {} deleted successfully", id);
+    }
+
+    public Boolean existsById(Long id) {
+        return orderRepository.existsById(id);
     }
 
     private BigDecimal calculateTotalPrice(List<OrderItem> orderItems) {

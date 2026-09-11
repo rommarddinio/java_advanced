@@ -1,0 +1,39 @@
+spring :
+  application :
+    name : paymentservice
+  data:
+    mongodb:
+      uri : ${MONGODB_URL}
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+  kafka:
+    bootstrap-servers : ${KAFKA_HOST}
+logging :
+  file :
+    name : logs/paymetservice.log
+server :
+  port : 8084
+feign:
+  random-number:
+    url: ${RANDOM_NUMBER_URL}
+resilience4j:
+  retry :
+    instances :
+      "random-number#getNumber()" :
+        max-attempts : 2
+        wait-duration : 300ms
+        ignore-exceptions :
+          - feign.FeignException.FeignClientException
+  circuitbreaker:
+    instances:
+      "random-number#getNumber()":
+        registerHealthIndicator : true
+        slidingWindowSize : 5
+        minimumNumberOfCalls : 5
+        failureRateThreshold : 50
+        waitDurationInOpenState : 10s
+        permittedNumberOfCallsInHalfOpenState : 2
+jwt:
+  secret: ${JWT_SECRET}

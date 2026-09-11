@@ -41,6 +41,10 @@ jobs:
         run : mvn clean test jacoco:report -B
         working-directory : apigateway
 
+      - name : Run Tests and Generate Jacoco Reports for Payment Service
+        run : mvn clean test jacoco:report -B
+        working-directory : paymentservice
+
       - name: Copy dependencies for Authentication Service
         run: mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -B
         working-directory: authenticationservice
@@ -57,19 +61,23 @@ jobs:
         run : mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -B
         working-directory : apigateway
 
+      - name : Copy dependencies for Payment Service
+        run : mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -B
+        working-directory : paymentservice
+
       - name : SonarCloud Scan via Maven
         run : >
           mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-          -f apigateway/pom.xml
+          -f paymentservice/pom.xml
           -Dsonar.projectKey=rommarddinio_java_advanced
           -Dsonar.organization=rommarddinio
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}
-          -Dsonar.sources=../authenticationservice/src/main/java,../userservice/src/main/java,../orderservice/src/main/java,,../apigateway/src/main/java,../authenticationservice/target/generated-sources/annotations,../userservice/target/generated-sources/annotations,../orderservice/target/generated-sources/annotations,../apigateway/target/generated-sources/annotations
-          -Dsonar.tests=../authenticationservice/src/test/java,../userservice/src/test/java,../orderservice/src/test/java,../apigateway/src/test/java
-          -Dsonar.java.binaries=../authenticationservice/target/classes,../userservice/target/classes,../orderservice/target/classes,../apigateway/target/classes
-          -Dsonar.java.libraries=../authenticationservice/target/dependency/**/*.jar,../userservice/target/dependency/**/*.jar,../orderservice/target/dependency/**/*.jar,../apigatewayorderservice/target/dependency/**/*.jar
-          -Dsonar.java.test.binaries=../authenticationservice/target/test-classes,../userservice/target/test-classes,../orderservice/target/test-classes,../apigateway/target/test-classes
-          -Dsonar.java.test.libraries=../authenticationservice/target/dependency/**/*.jar,../userservice/target/dependency/**/*.jar,../orderservice/target/dependency/**/*.jar,../apigateway/target/dependency/**/*.jar
-          -Dsonar.coverage.jacoco.xmlReportPaths=../authenticationservice/target/site/jacoco/jacoco.xml,../userservice/target/site/jacoco/jacoco.xml,../orderservice/target/site/jacoco/jacoco.xml,../apigateway/target/site/jacoco/jacoco.xml
+          -Dsonar.sources=../authenticationservice/src/main/java,../userservice/src/main/java,../orderservice/src/main/java,../apigateway/src/main/java,../paymentservice/src/main/java,../authenticationservice/target/generated-sources/annotations,../userservice/target/generated-sources/annotations,../orderservice/target/generated-sources/annotations,../apigateway/target/generated-sources/annotations,../paymentservice/target/generated-sources/annotations
+          -Dsonar.tests=../authenticationservice/src/test/java,../userservice/src/test/java,../orderservice/src/test/java,../apigateway/src/test/java,../paymentservice/src/test/java
+          -Dsonar.java.binaries=../authenticationservice/target/classes,../userservice/target/classes,../orderservice/target/classes,../apigateway/target/classes,../paymentservice/target/classes
+          -Dsonar.java.libraries=../authenticationservice/target/dependency/**/*.jar,../userservice/target/dependency/**/*.jar,../orderservice/target/dependency/**/*.jar,../apigateway/target/dependency/**/*.jar,../paymentservice/target/dependency/**/*.jar
+          -Dsonar.java.test.binaries=../authenticationservice/target/test-classes,../userservice/target/test-classes,../orderservice/target/test-classes,../apigateway/target/test-classes,../paymentservice/target/test-classes
+          -Dsonar.java.test.libraries=../authenticationservice/target/dependency/**/*.jar,../userservice/target/dependency/**/*.jar,../orderservice/target/dependency/**/*.jar,../apigateway/target/dependency/**/*.jar,../paymentservice/target/dependency/**/*.jar
+          -Dsonar.coverage.jacoco.xmlReportPaths=../authenticationservice/target/site/jacoco/jacoco.xml,../userservice/target/site/jacoco/jacoco.xml,../orderservice/target/site/jacoco/jacoco.xml,../apigateway/target/site/jacoco/jacoco.xml,../paymentservice/target/site/jacoco/jacoco.xml
           -Dsonar.coverage.exclusions=**/apigateway/client/**,**/apigateway/configuration/**,**/apigateway/dto/**,**/apigateway/exception/** 
