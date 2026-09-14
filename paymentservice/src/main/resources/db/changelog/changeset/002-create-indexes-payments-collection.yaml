@@ -1,0 +1,21 @@
+databaseChangeLog :
+  - changeSet :
+      id: 002
+      author: Roman
+      changes:
+        - createIndex :
+            collectionName : payments
+            keys : '{ orderId: 1 }'
+            options : '{ 
+                      unique: true, 
+                      name: "idx_unique_payments_order_success", 
+                      partialFilterExpression: { status: "SUCCESS" } 
+                    }'
+        - createIndex :
+            collectionName : payments
+            keys : '{ userId: 1, timestamp: -1 }'
+            options : '{ name: "idx_payments_user_id_timestamp" }'
+        - createIndex :
+            collectionName : payments
+            keys : '{ status: 1, timestamp: -1 }'
+            options : '{ name: "idx_payments_status_timestamp" }'

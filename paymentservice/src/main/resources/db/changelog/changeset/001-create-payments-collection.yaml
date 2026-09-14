@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001
+      author: Roman
+      changes:
+        - createCollection:
+            collectionName: payments

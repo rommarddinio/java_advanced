@@ -24,4 +24,6 @@ public interface OrderService {
     void deleteById(Long id);
 
     ResponseOrderDto updateById(Long id, Status status);
+
+    Boolean existsById(Long id);
 }

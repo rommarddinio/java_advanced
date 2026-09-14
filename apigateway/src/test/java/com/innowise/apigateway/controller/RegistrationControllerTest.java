@@ -25,7 +25,8 @@ import static org.mockito.Mockito.when;
         "SERVICE_SECRET=secret",
         "USER_SERVICE=http://userservice",
         "AUTH_SERVICE=http://authservice",
-        "ORDER_SERVICE=http://orderservice"
+        "ORDER_SERVICE=http://orderservice",
+        "PAYMENT_SERVICE=http://paymentservice"
 })
 @AutoConfigureWebTestClient
 class RegistrationControllerTest {

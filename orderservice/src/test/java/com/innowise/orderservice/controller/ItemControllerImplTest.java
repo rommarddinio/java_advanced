@@ -34,7 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
         "JWT_SECRET=testsecret",
-        "USER_SERVICE_URL=service"
+        "USER_SERVICE_URL=service",
+        "KAFKA_URI=localhost:9094"
 })
 class ItemControllerImplTest {
 

@@ -44,6 +44,8 @@ resilience4j:
         waitDuration: 200ms
         ignore-exceptions :
           - com.innowise.orderservice.exception.UserNotFoundException
+kafka:
+  uri: ${KAFKA_URI}
 ---
 spring:
   config:
@@ -81,3 +83,5 @@ resilience4j:
         waitDuration : 200ms
         ignore-exceptions :
           - com.innowise.orderservice.exception.UserNotFoundException
+kafka:
+  uri: ${KAFKA_URI}
